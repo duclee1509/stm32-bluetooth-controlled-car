@@ -69,13 +69,16 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+//Delay uS for HCSR04
 void delay(uint16_t time) //HAM DELAY uS
 {
 	__HAL_TIM_SET_COUNTER(&htim1, 0);
 	while(__HAL_TIM_GET_COUNTER(&htim1) < time);
 }
 
-uint32_t IC_Val1 = 0; //Bien cho HCSR04
+//Variables for HCSR04
+uint32_t IC_Val1 = 0;
 uint32_t IC_Val2 = 0;
 uint32_t Difference = 0;
 uint8_t Is_First_Captured = 0;  // is the first value captured ?
@@ -86,7 +89,7 @@ uint32_t Distance  = 100;
 
 // Let's write the callback function
 
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) //CODE SU DUNG HCSR04
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) //CODE HCSR04
 {
 	if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3)  // if the interrupt source is channel1
 	{
@@ -132,20 +135,20 @@ void HCSR04_Read (void)
 	__HAL_TIM_ENABLE_IT(&htim1, TIM_IT_CC3);
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) //CODE NHAN TIN HIEU BLUETOOTH
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) //CODE RECEIVE BLUETOOTH SIGNALS
 {
 		if(Rx_data[0] == 'w') state_led = 0;	//disable
 		if(Rx_data[0] == 'W') state_led = 1;	//enable
-		//if(Rx_data[0] == 'A') state_led = 2;	//avoiding car
-		if(Rx_data[0] == 'B') state = 2;	//lui
-		if(Rx_data[0] == 'L') state = 4;	//trai
-		if(Rx_data[0] == 'R') state = 6;	//phai
-		if(Rx_data[0] == 'F') state = 8;	//tien
-		if(Rx_data[0] == 'S') state = 0;	//dung
-		if(Rx_data[0] == 'G') state = 7;	// thang + quep trai
-		if(Rx_data[0] == 'I') state = 9;	// thang + queo phai
-		if(Rx_data[0] == 'H') state = 1;	//lui + queo trai
-		if(Rx_data[0] == 'J') state = 3;  //lui + queo phai
+		//if(Rx_data[0] == 'A') state_led = 2;	//avoiding car (UNUSED)
+		if(Rx_data[0] == 'B') state = 2;	//backward
+		if(Rx_data[0] == 'L') state = 4;	//left
+		if(Rx_data[0] == 'R') state = 6;	//right
+		if(Rx_data[0] == 'F') state = 8;	//forward
+		if(Rx_data[0] == 'S') state = 0;	//stand
+		if(Rx_data[0] == 'G') state = 7;	//forward_left
+		if(Rx_data[0] == 'I') state = 9;	//forward_right
+		if(Rx_data[0] == 'H') state = 1;	//backward_left
+		if(Rx_data[0] == 'J') state = 3;  //backward_right
 		HAL_UART_Receive_IT(&huart2, (uint8_t*)Rx_data, 1);
 }
 
@@ -154,7 +157,7 @@ void dieukhien() //CODE DIEU KHIEN
 		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 0);
 		HCSR04_Read();
 		HAL_Delay(15);
-		if(Distance >= 30)
+		if(Distance >= 30) //Move any directions
 		{
 			switch(state)
 			{
@@ -222,7 +225,7 @@ void dieukhien() //CODE DIEU KHIEN
 				break;
 			}
 		}
-		else
+		else //if distance < 30 -> just be able to backward
 		{
 			if(state == 2)
 			{
@@ -277,13 +280,13 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-	//HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);			//KHOI TAO SERVO (CHUA DUNG)
-	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_3);			//KHOI TAO CHAN ECHO CHO HCSR04
-	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);				//KHOI TAO CAC CHAN PWM CHO MOTOR DC
+	//HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);			//initialize servo (UNUSED)
+	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_3);			//initialize ECHO pin for HCSR04
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);				//initialize PWM pins for MOTORS DC
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
-	HAL_UART_Receive_IT(&huart2, (uint8_t*)Rx_data, 1);	//NHAN TIN HIEU BLUETOOTH
+	HAL_UART_Receive_IT(&huart2, (uint8_t*)Rx_data, 1);	//Receive BLUETOOTH signals
 	
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -294,7 +297,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		switch(state_led)
 		{
-			case 0: //DISABLE -> XE KO CHAY
+			case 0: //DISABLE -> car stand still
 				HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 1);
 				htim3.Instance->CCR2 = 0; 
 				htim3.Instance->CCR1 = 0;
@@ -302,7 +305,7 @@ int main(void)
 				htim4.Instance->CCR2 = 0;
 			break;
 			
-			case 1: //ENABLE
+			case 1: //ENABLE -> car move
 				dieukhien();
 			break;
 		}

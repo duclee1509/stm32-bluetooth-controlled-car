@@ -1,2 +1,0 @@
-- Code ở đây sử dụng truyền blurtooth HC05.
--> muốn làm lại phải sửa file receive altium, chỗ UART HC05.

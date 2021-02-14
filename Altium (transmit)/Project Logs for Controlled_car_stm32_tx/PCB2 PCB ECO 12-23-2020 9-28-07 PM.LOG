@@ -1,5 +1,0 @@
-Change Component Designator: OldDesignator=LED? NewDesignator=LED
-Added Pin To Net: NetName=Net?_P$17 Pin=?-P$17
-Added Pin To Net: NetName=Net?_P$17 Pin=SW1-1
-Added Net: Name=Net?_P$17
-Added Room: Name=Sheet2
