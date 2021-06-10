@@ -1,0 +1,5 @@
+Change Component Comment : Designator=C3 Old Comment=Header4 New Comment=HCSR04
+Change Component Comment : Designator=C1 Old Comment=JP4 New Comment=HC05
+Change Component Comment : Designator=C2 Old Comment=JP4 New Comment=L298
+Change Component Designator: OldDesignator=JP1 NewDesignator=POWER
+Added Room: Name=Sheet1

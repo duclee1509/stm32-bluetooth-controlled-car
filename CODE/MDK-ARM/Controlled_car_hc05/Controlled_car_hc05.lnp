@@ -1,0 +1,24 @@
+--cpu Cortex-M3
+"controlled_car_hc05\startup_stm32f103xb.o"
+"controlled_car_hc05\main.o"
+"controlled_car_hc05\stm32f1xx_it.o"
+"controlled_car_hc05\stm32f1xx_hal_msp.o"
+"controlled_car_hc05\stm32f1xx_hal_gpio_ex.o"
+"controlled_car_hc05\stm32f1xx_hal_tim.o"
+"controlled_car_hc05\stm32f1xx_hal_tim_ex.o"
+"controlled_car_hc05\stm32f1xx_hal.o"
+"controlled_car_hc05\stm32f1xx_hal_rcc.o"
+"controlled_car_hc05\stm32f1xx_hal_rcc_ex.o"
+"controlled_car_hc05\stm32f1xx_hal_gpio.o"
+"controlled_car_hc05\stm32f1xx_hal_dma.o"
+"controlled_car_hc05\stm32f1xx_hal_cortex.o"
+"controlled_car_hc05\stm32f1xx_hal_pwr.o"
+"controlled_car_hc05\stm32f1xx_hal_flash.o"
+"controlled_car_hc05\stm32f1xx_hal_flash_ex.o"
+"controlled_car_hc05\stm32f1xx_hal_exti.o"
+"controlled_car_hc05\stm32f1xx_hal_uart.o"
+"controlled_car_hc05\system_stm32f1xx.o"
+--library_type=microlib --strict --scatter "Controlled_car_hc05\Controlled_car_hc05.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "Controlled_car_hc05.map" -o Controlled_car_hc05\Controlled_car_hc05.axf
